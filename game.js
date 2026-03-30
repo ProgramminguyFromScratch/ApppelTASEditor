@@ -177,28 +177,32 @@ class Game {
         this.renderer.renderPlayer(playerPos, this.camera);
         this.renderer.renderDynamic(this.playerState.OBJ, this.camera);
     }
+
     debugKillZones() {
-        const step = 1;
+        const step = 2; // Increased step to 4 to prevent severe frame drops
         this.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
 
         for (let x = 0; x < this.canvas.width; x += step) {
             for (let y = 0; y < this.canvas.height; y += step) {
-                const worldX = x + this.camera.x;
-                const worldY = y - this.camera.y;
+                // 1. Correctly reverse the renderer's Camera Zoom and Translation
+                const worldX = (x - this.canvas.width / 2) / this.camera.zoom + this.camera.x;
+                const worldY = this.camera.y - (y - this.canvas.height / 2) / this.camera.zoom;
 
+                // 2. Calculate the 1D map array index (Appel tiles are 60x60)
                 const tx = Math.floor(worldX / 60);
                 const ty = Math.floor(worldY / 60);
                 const idx = tx + ty * this.physics.LSX;
 
+                // 3. Prevent checking out-of-bounds map data
                 if (idx >= 0 && idx < this.physics.MAP.length) {
-                    if (this.physics.touching.is_pixel_on_spike(worldX, -worldY, this.physics)) {
-                        this.ctx.fillRect(x, (-y + this.canvas.height), 1, 1);
-                    }
                     
-                    if (this.physics.touching.is_pixel_on_player(worldX, -worldY, this.playerState)) {
-                        this.ctx.fillRect(x, (-y + this.canvas.height), 1, 1);
+                    // Pass the corrected world coordinates (worldY is no longer negated)
+                    if (this.physics.touching.is_pixel_on_spike(worldX, worldY, this.physics) ||
+                        this.physics.touching.is_pixel_on_player(worldX, worldY, this.playerState)) {
+                        
+                        // Draw exactly at the screen pixel we are sampling
+                        this.ctx.fillRect(x, y, step, step);
                     }
-
                 }
             }
         }
@@ -223,6 +227,8 @@ class Game {
         this.profiler.end('Render: Player');
 
         this.tick += 1;
+
+        this.debugKillZones()
 
         this.profiler.draw(this.ctx);
 

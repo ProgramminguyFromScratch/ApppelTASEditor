@@ -333,7 +333,7 @@ function inputsToTASFormat(inputs) {
         if (mask & 4) keys += "S";
         if (mask & 1) keys += "D";
         if (!keys) keys = "_";
-        tokens.push(count === 1 ? keys : keys + count);
+        tokens.push(keys + count);
         i += count;
     }
     return tokens.join(" ");
