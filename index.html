@@ -1555,5 +1555,50 @@
     <script src="solver.js"></script>
     <script src="app.js"></script>
 
+    <script>
+        // Compensate for proxy nav bars injected as fixed overlays at the bottom.
+        // dvh handles browser chrome, but proxy bars sit outside the viewport
+        // measurement — so we detect them manually and shrink the body to fit.
+        (function () {
+            var APP_IDS = new Set(['timeline-section']);
+            var APP_CLASSES = new Set(['container']);
+
+            function isAppElement(el) {
+                if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return true;
+                if (APP_IDS.has(el.id)) return true;
+                for (var c of APP_CLASSES) if (el.classList.contains(c)) return true;
+                return false;
+            }
+
+            function update() {
+                var vh = window.innerHeight;
+                var barHeight = 0;
+
+                Array.from(document.body.children).forEach(function (el) {
+                    if (isAppElement(el)) return;
+                    var s = getComputedStyle(el);
+                    if (s.position !== 'fixed' && s.position !== 'sticky') return;
+                    var r = el.getBoundingClientRect();
+                    // Only care about elements anchored near the bottom
+                    if (r.top > vh * 0.5 && r.height > 0) {
+                        barHeight = Math.max(barHeight, vh - r.top);
+                    }
+                });
+
+                document.body.style.height = barHeight > 0
+                    ? (vh - barHeight) + 'px'
+                    : '';   // fall back to CSS (100dvh)
+            }
+
+            // Run immediately, after load, on resize, and after a short delay
+            // to catch proxies that inject their bar slightly late.
+            update();
+            window.addEventListener('load', update);
+            window.addEventListener('resize', update);
+            setTimeout(update, 300);
+            setTimeout(update, 1000);
+        })();
+    </script>
+
 </body>
 </html>
