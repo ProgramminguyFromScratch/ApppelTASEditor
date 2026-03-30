@@ -1555,27 +1555,5 @@
     <script src="solver.js"></script>
     <script src="app.js"></script>
 
-    <script>
-        (function () {
-            function update() {
-                var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
-                document.body.style.height = h + 'px';
-            }
-
-            update();
-            window.addEventListener('load', update);
-            window.addEventListener('resize', update);
-            if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', update);
-                window.visualViewport.addEventListener('scroll', update);
-            }
-            setTimeout(update, 300);
-            setTimeout(update, 1000);
-            setTimeout(update, 2500);
-
-            new MutationObserver(update).observe(document.body, { childList: true, subtree: false });
-        })();
-    </script>
-
 </body>
 </html>
