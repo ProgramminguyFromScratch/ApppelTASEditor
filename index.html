@@ -1,3 +1,449 @@
+<!-- <!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+    <title>Appel TAS Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: monospace;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid #ffff00;
+            overflow: hidden;
+        }
+
+        .bottom-section {
+            display: flex;
+            flex: 1;
+            gap: 15px;
+            padding: 10px;
+            border-top: 2px solid #00ff55;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+
+        #playerState {
+            padding: 15px;
+            background: #0a0a0a;
+            flex: 1;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            align-content: start;
+        }
+
+        .info-panels {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 0 0 auto;
+        }
+
+        .controls,
+        .status-display {
+            position: static;
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid #ffff00;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            z-index: 1000;
+        }
+
+        .status-display {
+            border: 2px solid #00ff55;
+        }
+
+        .state-section {
+            margin-bottom: 15px;
+            padding: 8px;
+            background: #111;
+            border-left: 3px solid #00ff55;
+        }
+
+        .state-key   { color: #ffff00; }
+        .state-value { color: #00ff55; }
+
+        .right-panel {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .right-panel > div {
+            padding: 10px;
+            border-bottom: 2px solid #ffff00;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            color: #ffff00;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #levelCodeInput  { flex: 0 0 auto; }
+        #inputEditorSection { flex: 1 1 auto; }
+        #replayCodeSection  { flex: 0 0 auto; }
+
+        input[type="text"],
+        textarea {
+            background: #111;
+            color: #00ff55;
+            border: 1px solid #ffff00;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 15px;
+            resize: none;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border: 1px solid #00ff55;
+            box-shadow: 0 0 5px rgba(0, 255, 85, 0.3);
+        }
+
+        input[type="text"] {
+            flex: 0 0 auto;
+            height: 24px;
+        }
+
+        #inputEditorWrapper {
+            flex: 1 1 auto;
+            margin-top: 5px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #inputEditor {
+            flex: 1 1 auto;
+            color: transparent;
+            caret-color: #00ff55;
+            position: relative;
+            z-index: 1;
+            background: #111;
+            border: 1px solid transparent;
+        }
+        #inputEditor::placeholder {
+            color: #00ff55;
+            opacity: 1;
+        }
+
+        #inputHighlightOverlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 2;
+            font-family: monospace;
+            font-size: 15px;
+            line-height: inherit;
+            padding: 8px;
+            margin: 0;
+            color: #00ff55;
+            background: transparent;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: hidden;
+            border: 1px solid transparent;
+            box-sizing: border-box;
+        }
+
+        .current-token {
+            background: rgba(255, 255, 0, 0.28);
+            color: #ffff00;
+            border-radius: 3px;
+            outline: 1px solid rgba(255, 255, 0, 0.6);
+        }
+
+        .paren-syntax { color: #ff9900; }
+
+        #replayCode {
+            flex: 0 0 auto;
+            height: 80px;
+            margin-top: 5px;
+            background: #0a0a0a;
+            color: #ffff00;
+        }
+
+        #gameCanvas {
+            display: block;
+            background: #000;
+            border-bottom: 2px solid #ffff00;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 6px;
+        }
+
+        .control-key  { color: #ffff00; min-width: 50px; font-weight: bold; }
+        .control-desc { color: #00ff55; text-align: right; }
+
+        .status-item {
+            color: #00ff55;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-item strong { color: #ffff00; }
+
+        .fps-input {
+            width: 50px;
+            background: #111;
+            color: #00ff55;
+            border: 1px solid #ffff00;
+            font-family: monospace;
+            padding: 2px 5px;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .fps-input:focus {
+            outline: none;
+            border-color: #00ff55;
+        }
+
+        .action-btn {
+            background: #111;
+            color: #00ff55;
+            border: 1px solid #ffff00;
+            padding: 6px 12px;
+            font-family: monospace;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+            width: 100%;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .action-btn:hover {
+            background: #222;
+            border-color: #00ff55;
+            box-shadow: 0 0 5px rgba(0, 255, 85, 0.3);
+        }
+
+        #timeline-section {
+            flex-shrink: 0;
+            height: 82px;
+            border-top: 2px solid #ffff00;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #timeline-header {
+            flex-shrink: 0;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            border-bottom: 1px solid #1e1e1e;
+            gap: 12px;
+        }
+
+        #timeline-header .section-title {
+            margin: 0;
+            line-height: 1;
+        }
+
+        #timeline-time {
+            color: #00ff55;
+            font-size: 11px;
+            font-family: monospace;
+            flex: 1;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        #timeline-zoom-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        #timeline-zoom-wrap label {
+            color: #ffff00;
+            white-space: nowrap;
+        }
+
+        #timelineZoom {
+            width: 72px;
+            accent-color: #ffff00;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        #timeline-track {
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: relative;
+            cursor: crosshair;
+        }
+
+        #timeline-track::-webkit-scrollbar { height: 4px; }
+        #timeline-track::-webkit-scrollbar-track { background: #111; }
+        #timeline-track::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+        #timelineCanvas {
+            display: block;
+            height: 100%;
+            image-rendering: pixelated;
+        }
+
+        #timeline-playhead {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 2px;
+            background: #ffff00;
+            pointer-events: none;
+            box-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="left-panel">
+            <canvas id="gameCanvas"></canvas>
+            <div class="bottom-section">
+                <div id="playerState"></div>
+                <div class="info-panels">
+                    <div class="controls">
+                        <div class="control-item">
+                            <span class="control-key">Q</span>
+                            <span class="control-desc">Restart TAS</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="control-key">V</span>
+                            <span class="control-desc">Pause / Frame Step</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="control-key">B</span>
+                            <span class="control-desc">Resume / Unpause</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="control-key">C</span>
+                            <span class="control-desc">Step Back 1 Frame</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="control-key">1-3</span>
+                            <span class="control-desc">Save State</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="control-key">4-6</span>
+                            <span class="control-desc">Load State</span>
+                        </div>
+                    </div>
+                    <div class="status-display">
+                        <div class="status-item"><strong>Frame:</strong> <span id="frameCounter">0</span></div>
+                        <div class="status-item"><strong>Input:</strong> <span id="inputProgress">0/0</span></div>
+                        <div class="status-item">
+                            <strong>FPS:</strong>
+                            <input type="number" id="fpsInput" class="fps-input" value="30" min="1">
+                        </div>
+                        <div class="status-item"><strong>Status:</strong> <span id="statusDisplay">Loading</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div id="levelCodeInput">
+                <div class="section-title">Level Code</div>
+                <input type="text" id="levelCode" placeholder="Paste level code here...">
+            </div>
+            <div id="inputEditorSection">
+                <div class="section-title">Frame Inputs</div>
+                <div id="inputEditorWrapper">
+                    <textarea id="inputEditor"
+                        placeholder="D1 WD5 // press D (or right) for one frame, then press WD for 5&#10;sda8 d7 //comments&#10;_6 // underscore for no keys&#10;6 // also works for no keys&#10;break // pauses the game for you&#10;(D1 SD1)50 // repeat 50 times"></textarea>
+                    <pre id="inputHighlightOverlay" aria-hidden="true"></pre>
+                </div>
+            </div>
+            <div id="replayCodeSection">
+                <div class="section-title">Replay Code</div>
+                <textarea id="replayCode" readonly></textarea>
+                <button id="importReplayBtn" class="action-btn">Import Replay Code</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="timeline-section">
+
+        <div id="timeline-header">
+            <span class="section-title">Timeline</span>
+
+            <span id="timeline-time">0.000s  |  Frame 0</span>
+
+            <div id="timeline-zoom-wrap">
+                <label for="timelineZoom">Zoom</label>
+                <input type="range" id="timelineZoom" min="1" max="20" value="4">
+            </div>
+        </div>
+
+        <div id="timeline-track">
+            <canvas id="timelineCanvas"></canvas>
+            <div id="timeline-playhead"></div>
+        </div>
+
+    </div>
+
+    <script src="profiler.js"></script>
+    <script src="touching.js"></script>
+    <script src="physics.js"></script>
+    <script src="levelRenderer.js"></script>
+    <script src="game.js"></script>
+    <script src="tas.js"></script>
+
+</body>
+</html> -->
+
 <!DOCTYPE html>
 <meta charset="UTF-8">
 <html>
@@ -341,6 +787,8 @@
             will-change: transform;
         }
 
+        /* ── Tab system ─────────────────────────────────────── */
+
         #right-tabs {
             flex: 0 0 auto;
             display: flex;
@@ -404,6 +852,8 @@
         #tab-content-solver::-webkit-scrollbar-track { background: #111; }
         #tab-content-solver::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
+        /* inputEditorSection and replayCodeSection lose the .right-panel > div rule
+           when nested inside tab-content-inputs, so restore those styles explicitly */
         #inputEditorSection {
             flex: 1 1 auto;
             padding: 10px;
@@ -421,6 +871,8 @@
             display: flex;
             flex-direction: column;
         }
+
+        /* ── Solver panel ───────────────────────────────────── */
 
         .solver-section {
             padding: 10px;
@@ -538,6 +990,7 @@
 
         .solver-btn.stop:hover { background: #550000; border-color: #cc0000; }
 
+        /* Combo grid */
         .combo-grid-header {
             display: flex;
             justify-content: space-between;
@@ -607,6 +1060,7 @@
         .combo-max-input:focus { border-color: #ffff00; outline: none; color: #fff; }
         .combo-toggle.disabled .combo-max-input { opacity: 0.3; pointer-events: none; }
 
+        /* Stats */
         #s_stats {
             background: #0d0d0d;
             border: 1px solid #1e1e1e;
@@ -625,6 +1079,49 @@
         .stat-row .highlight { color: #ffff00; font-weight: bold; }
         #s_statusText { color: #00ff55; }
 
+
+        /* TAS output box */
+        #s_tasOutputWrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        #s_tasOutput {
+            flex: 1;
+            background: #0a0a0a;
+            color: #ffff00;
+            border: 1px solid #333;
+            padding: 5px 7px;
+            font-family: monospace;
+            font-size: 12px;
+            resize: none;
+            height: 28px;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: text;
+        }
+
+        #s_tasOutput:focus { outline: none; border-color: #ffff00; }
+
+        #s_tasCopyBtn {
+            flex-shrink: 0;
+            background: #1a1a1a;
+            color: #00ff55;
+            border: 1px solid #333;
+            padding: 4px 10px;
+            font-family: monospace;
+            font-size: 11px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        #s_tasCopyBtn:hover { border-color: #ffff00; color: #ffff00; }
+        #s_tasCopyBtn.copied { color: #00ff55; border-color: #00ff55; }
+
+        /* Frame preview */
         #s_framePreviewSection {
             display: flex;
             flex-direction: column;
@@ -706,6 +1203,7 @@
             line-height: 1;
         }
 
+        /* Frame info bar */
         #s_selectedFrameInfo {
             background: #0d0d0d;
             border: 1px solid #1e1e1e;
@@ -735,6 +1233,7 @@
 
         #s_frameInfoExpanded.open { display: block; }
 
+        /* State grid inside expanded frame info */
         .state-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -769,6 +1268,7 @@
 
 
 
+        /* Number inputs in solver */
         input[type="number"].solver-input {
             height: auto;
             width: 60px;
@@ -831,11 +1331,13 @@
                 <input type="text" id="levelCode" placeholder="Paste level code here...">
             </div>
 
+            <!-- Tab bar -->
             <div id="right-tabs">
                 <button class="rtab active" id="tab-inputs-btn" onclick="switchRightTab('inputs')">Frame Inputs</button>
                 <button class="rtab"        id="tab-solver-btn" onclick="switchRightTab('solver')">Brute Force Solver</button>
             </div>
 
+            <!-- Input editor tab -->
             <div id="tab-content-inputs" class="tab-content">
                 <div id="inputEditorSection">
                     <div class="section-title">Frame Inputs</div>
@@ -852,14 +1354,17 @@
                 </div>
             </div>
 
+            <!-- Solver tab -->
             <div id="tab-content-solver" class="tab-content hidden">
 
+                <!-- Player state -->
                 <div class="solver-section">
                     <span class="solver-label">Player State <span class="solver-sublabel">(JSON — from current TAS frame)</span></span>
                     <textarea id="s_playerState" class="solver-input solver-textarea" placeholder="Click button below to capture state from current TAS frame..."></textarea>
                     <button class="solver-btn" onclick="getCurrentPlayerState()">Get Current Player State</button>
                 </div>
 
+                <!-- Depth + Goal -->
                 <div class="solver-section">
                     <div class="solver-row">
                         <span class="solver-label" style="white-space:nowrap">Search Depth (Frames)</span>
@@ -883,6 +1388,7 @@
                     </div>
                 </div>
 
+                <!-- Frame pins -->
                 <div class="solver-section">
                     <span class="solver-label">Frame Pins <span class="solver-sublabel">(constrain keys on specific frames)</span></span>
                     <input type="text" id="s_framePins" placeholder="e.g. 1:+W, 2:-D, 3:+W-D, 4:!AD, 5:WD" class="solver-input" style="font-size:12px;">
@@ -897,6 +1403,7 @@
                     </div>
                 </div>
 
+                <!-- Kill zone -->
                 <div class="solver-section">
                     <span class="solver-label">Kill Zone <span class="solver-sublabel">(prune branch if true)</span></span>
                     <input type="text" id="s_killZone" placeholder="e.g. PLAYER_X > 300 || is_falling < 5" class="solver-input" style="font-size:12px;">
@@ -906,6 +1413,7 @@
                     </div>
                 </div>
 
+                <!-- Combos -->
                 <div class="solver-section">
                     <div class="combo-grid-header">
                         <span class="solver-label" style="text-transform:none;letter-spacing:0;font-size:11px;color:#ffff00;">Enabled Key Combos</span>
@@ -918,6 +1426,7 @@
                     <div class="combo-grid" id="s_comboGrid"></div>
                 </div>
 
+                <!-- Start / Stop -->
                 <div class="solver-section">
                     <div class="solver-row">
                         <button class="solver-btn primary" onclick="startSolver()">START</button>
@@ -925,6 +1434,7 @@
                     </div>
                 </div>
 
+                <!-- Stats -->
                 <div class="solver-section">
                     <div id="s_stats">
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;">
@@ -936,11 +1446,25 @@
                     </div>
                 </div>
 
+                <!-- Frame preview -->
                 <div class="solver-section">
                     <div id="s_framePreviewSection">
                         <div id="s_framePreviewHeader">
                             <h3>Frame Preview</h3>
                             <span id="s_assetsStatus">Renderer not loaded</span>
+                        </div>
+                        <div id="s_tasOutputWrap">
+                            <input type="text" id="s_tasOutput" readonly placeholder="Best inputs will appear here..." title="TAS-format inputs — paste directly into the Frame Inputs editor">
+                            <button id="s_tasCopyBtn" onclick="
+                                const el = document.getElementById('s_tasOutput');
+                                if (!el.value) return;
+                                navigator.clipboard.writeText(el.value).then(() => {
+                                    const btn = document.getElementById('s_tasCopyBtn');
+                                    btn.textContent = 'Copied!';
+                                    btn.classList.add('copied');
+                                    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1200);
+                                });
+                            ">Copy</button>
                         </div>
                         <div id="s_frameStrip">
                             <div id="s_noFrames">Run the solver or a manual replay to see frame previews</div>
@@ -956,8 +1480,10 @@
                 </div>
 
             </div>
+            <!-- end solver tab -->
 
         </div>
+        <!-- end right-panel -->
 
     </div>
 
@@ -1006,14 +1532,18 @@
     <script src="touching.js"></script>
     <script src="physics.js"></script>
     <script>
+        /* Load simplephysics.js in an isolated scope so its top-level const
+           declarations (e.g. _KEY_LOOKUP) don't clash with the identical
+           ones already declared by physics.js. */
         (function () {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'simplephysics.js', false);
+            xhr.open('GET', 'simplephysics.js', false); // synchronous
             xhr.send();
             if (xhr.status !== 200) {
                 console.error('Failed to load simplephysics.js — status ' + xhr.status);
                 return;
             }
+            // Execute inside a Function scope; return the class so it escapes
             const fn = new Function(xhr.responseText + '\nreturn AppelPhysicsSimple;');
             window.AppelPhysicsSimple = fn();
         })();
