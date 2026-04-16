@@ -228,7 +228,7 @@ class Game {
 
         this.tick += 1;
 
-        this.debugKillZones()
+        // this.debugKillZones()
 
         this.profiler.draw(this.ctx);
 

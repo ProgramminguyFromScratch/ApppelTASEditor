@@ -154,7 +154,7 @@ class LevelRenderer {
 
         this.ctx.translate(playerPos.x, -playerPos.y);
 
-        const angle = playerPos.angle || 0; 
+        const angle = (playerPos.angle - 90) || 0; 
         this.ctx.rotate(angle * Math.PI / 180);
 
         if (playerPos.dir === -1) {

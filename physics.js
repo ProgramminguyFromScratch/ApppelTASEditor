@@ -495,22 +495,22 @@ class AppelPhysics {
         }
 
         if (playerState.player_state === 1) {
-            const targetDirection = playerState.flipped * 90;
-            let temp = ((targetDirection - playerState.direction + 180) % 360) - 180;
+            let temp = (((((playerState.flipped + 1) * 90 - playerState.direction) + 180) % 360) - 180);
 
             if (Math.abs(temp) < 22.5) {
-                playerState.direction = targetDirection;
+                playerState.direction = playerState.flipped + 90;
                 playerState.player_state = 0;
             } else {
-                const step = (temp >= 0 && !(temp === -180 && playerState.direction === 0)) ? 30 : -30;
-                playerState.direction += step;
-                playerState.direction = ((playerState.direction % 360) + 360) % 360;
-                if (playerState.direction > 180) playerState.direction -= 360;
+                if ((temp < 0) && !((temp = -180) && playerState.direction === 0)) {
+                    playerState.direction -= 30;
+                } else {
+                    playerState.direction += 30;
+                }
+                return;
             }
-            return;
         }
 
-        playerState.direction = playerState.flipped * 90;
+        playerState.direction = (playerState.flipped + 1) * 90;
         if (playerState.direction > 180) playerState.direction -= 360;
     }
 
