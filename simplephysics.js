@@ -1036,7 +1036,7 @@ class AppelPhysicsSimple {
             flipped: 0,
             player_state: 0,  // 0=normal, 1=spin, 2=crouch, 3=wall spin, 4=BOING
             player_wall: null,  // null=no wall, 1=right wall, -1=left wall, 0=ceiling
-            direction: 0,
+            direction: 90,
             PLAYER_DIR: 1,
             wasInSpikeTileLastFrame: false,
             friction_dx: 0,
